@@ -1,5 +1,6 @@
-# {Your project name}
-TODO: Insert brief description of your project
+# conjur-opentelemetry-tracer
+A companion library for OpenTelemetry to provide tracing support for Conjur components
+in a consistent fashion. Defines output providers for Jaeger, Console, and Noop.
 
 ## Certification level
 TODO: Select the appropriate certification level section below, and remove all others.
@@ -32,8 +33,23 @@ does it require?
 
 ## Usage instructions
 
-TODO: add details for how to use your project. Examples can be quite nice here. You should have
-a high level overview of the benefit of your project and its main use cases.
+```go
+
+tp, _ := trace.NewTracerProvider(trace.ConsoleProviderType, "", os.Stdout, true)
+defer tp.Shutdown()
+
+tracer := tp.Tracer("my-service")
+
+ctx, span := tracer.Start(context.Background(), "My process")
+defer span.End()
+
+// Do some task
+
+if err != nil {
+   span.RecordErrorAndSetStatus(err)
+}
+
+```
 
 ## Contributing
 
@@ -42,7 +58,7 @@ of our development workflows, please see our [contributing guide](CONTRIBUTING.m
 
 ## License
 
-Copyright (c) 2020 CyberArk Software Ltd. All rights reserved.
+Copyright (c) 2022 CyberArk Software Ltd. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

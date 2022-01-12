@@ -62,13 +62,15 @@ pipeline {
 
     stage('Build') {
       steps {
-        // Perform any builds here
+        sh './bin/build'
       }
     }
 
     stage('Test') {
       steps {
-        // Perform any testing here
+        sh './bin/test'
+
+        junit 'test/junit.xml'
       }
     }
   
