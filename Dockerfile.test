@@ -1,0 +1,18 @@
+FROM golang:1.17-alpine
+MAINTAINER CyberArk Software Ltd.
+LABEL id="conjur-opentelemetry-tracer-test-runner"
+
+ENTRYPOINT [ "go", "test", "-v", "-timeout", "3m" ]
+WORKDIR /conjur-opentelemetry-tracer
+
+RUN apk add -u curl \
+               gcc \
+               git \
+               mercurial \
+               musl-dev
+
+COPY go.mod go.sum /conjur-opentelemetry-tracer/
+
+RUN go mod download
+
+COPY . .
