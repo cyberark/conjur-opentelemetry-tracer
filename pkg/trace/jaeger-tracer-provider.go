@@ -16,11 +16,12 @@ import (
 // a Jaeger exporter.
 type jaegerTracerProvider struct {
 	providerSDK *tracesdk.TracerProvider
+	tracerName  string
 }
 
-func newJaegerTracerProvider(url string) (TracerProvider, error) {
+func newJaegerTracerProvider(config TracerProviderConfig) (TracerProvider, error) {
 	// Create the Jaeger exporter
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
+	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(config.collectorURL)))
 	if err != nil {
 		return nil, err
 	}
@@ -30,17 +31,20 @@ func newJaegerTracerProvider(url string) (TracerProvider, error) {
 		// Record information about this application in a Resource.
 		tracesdk.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(tracerService),
-			attribute.String("environment", tracerEnvironment),
-			attribute.Int64("ID", tracerID),
+			semconv.ServiceNameKey.String(config.tracerService),
+			attribute.String("environment", config.tracerEnvironment),
+			attribute.Int64("ID", config.tracerID),
 		)),
 	)
-	tp := jaegerTracerProvider{providerSDK: providerSDK}
+	tp := jaegerTracerProvider{
+		providerSDK: providerSDK,
+		tracerName:  config.tracerName,
+	}
 	return &tp, nil
 }
 
 func (tp *jaegerTracerProvider) Tracer(name string) Tracer {
-	return NewOtelTracer(tp.providerSDK.Tracer(tracerName))
+	return NewOtelTracer(tp.providerSDK.Tracer(tp.tracerName))
 }
 
 func (tp *jaegerTracerProvider) Shutdown(ctx context.Context) error {

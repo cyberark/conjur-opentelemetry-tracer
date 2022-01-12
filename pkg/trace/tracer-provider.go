@@ -25,12 +25,20 @@ const (
 	DontSetGlobalProvider = false
 )
 
-const (
-	tracerName        = "secrets-provider"
-	tracerService     = "secrets-provider"
-	tracerEnvironment = "production"
-	tracerID          = 1
-)
+type TracerProviderConfig struct {
+	// Name of the tracer
+	tracerName string
+	// Service to be traced
+	tracerService string
+	// Execution environment such as "production" or "development"
+	tracerEnvironment string
+	// Unique ID of the tracer
+	tracerID int64
+	// URL of the collector when using Jaeger
+	collectorURL string
+	// Writer to use for the console tracer
+	consoleWriter io.Writer
+}
 
 // TracerProvider provides access to Tracers, which in turn allow for creation
 // of trace Spans.
@@ -46,9 +54,8 @@ type TracerProvider interface {
 // optionally sets the new TracerProvider as the global TracerProvider.
 func NewTracerProvider(
 	providerType TracerProviderType,
-	collectorURL string,
-	consoleWriter io.Writer,
-	setGlobalProvider bool) (TracerProvider, error) {
+	setGlobalProvider bool,
+	config TracerProviderConfig) (TracerProvider, error) {
 
 	var tp TracerProvider
 	var err error
@@ -57,9 +64,9 @@ func NewTracerProvider(
 	case NoopProviderType:
 		tp = newNoopTracerProvider()
 	case ConsoleProviderType:
-		tp, err = newConsoleTracerProvider(consoleWriter)
+		tp, err = newConsoleTracerProvider(config)
 	case JaegerProviderType:
-		tp, err = newJaegerTracerProvider(collectorURL)
+		tp, err = newJaegerTracerProvider(config)
 	default:
 		err = fmt.Errorf("invalid TracerProviderType '%d' in call to NewTracerProvider",
 			providerType)

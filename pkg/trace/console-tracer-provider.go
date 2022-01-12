@@ -21,10 +21,11 @@ type consoleTracerProvider struct {
 	providerSDK   *tracesdk.TracerProvider
 	tempFilePath  string
 	consoleWriter io.Writer
+	tracerName    string
 }
 
 // Accepts a writer as an argument to allow mocking stdout
-func newConsoleTracerProvider(consoleWriter io.Writer) (TracerProvider, error) {
+func newConsoleTracerProvider(config TracerProviderConfig) (TracerProvider, error) {
 	// Write output to temp file and emit to stdout on shutdown so it'll be in one place,
 	// not scattered throughout the console output
 	tempFile, err := ioutil.TempFile(os.TempDir(), "traces.log")
@@ -47,21 +48,22 @@ func newConsoleTracerProvider(consoleWriter io.Writer) (TracerProvider, error) {
 		// Record information about this application in a Resource.
 		tracesdk.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(tracerService),
-			attribute.String("environment", tracerEnvironment),
-			attribute.Int64("ID", tracerID),
+			semconv.ServiceNameKey.String(config.tracerService),
+			attribute.String("environment", config.tracerEnvironment),
+			attribute.Int64("ID", config.tracerID),
 		)),
 	)
 	tp := consoleTracerProvider{
 		providerSDK:   providerSDK,
 		tempFilePath:  tempFile.Name(),
-		consoleWriter: consoleWriter,
+		consoleWriter: config.consoleWriter,
+		tracerName:    config.tracerName,
 	}
 	return &tp, nil
 }
 
 func (tp *consoleTracerProvider) Tracer(name string) Tracer {
-	return NewOtelTracer(tp.providerSDK.Tracer(tracerName))
+	return NewOtelTracer(tp.providerSDK.Tracer(tp.tracerName))
 }
 
 func (tp *consoleTracerProvider) Shutdown(ctx context.Context) error {

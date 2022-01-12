@@ -69,7 +69,10 @@ func TestTracer(t *testing.T) {
 			output := &bytes.Buffer{}
 			ctx := context.Background()
 
-			tp, err := NewTracerProvider(tc.providerType, tc.collectorUrl, output, false)
+			tp, err := NewTracerProvider(tc.providerType, false, TracerProviderConfig{
+				collectorURL:  tc.collectorUrl,
+				consoleWriter: output,
+			})
 			assert.NoError(t, err)
 			tracer := tp.Tracer(tc.name)
 
@@ -91,7 +94,7 @@ func TestTracer(t *testing.T) {
 	}
 
 	t.Run("Errors on invalid provider", func(t *testing.T) {
-		_, err := NewTracerProvider(TracerProviderType(10), "", nil, false)
-		assert.Error(t, err)
+		_, err := NewTracerProvider(TracerProviderType(10), false, TracerProviderConfig{})
+		assert.Contains(t, err.Error(), "invalid TracerProviderType")
 	})
 }
