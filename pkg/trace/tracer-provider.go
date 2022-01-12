@@ -27,17 +27,17 @@ const (
 
 type TracerProviderConfig struct {
 	// Name of the tracer
-	tracerName string
+	TracerName string
 	// Service to be traced
-	tracerService string
+	TracerService string
 	// Execution environment such as "production" or "development"
-	tracerEnvironment string
+	TracerEnvironment string
 	// Unique ID of the tracer
-	tracerID int64
+	TracerID int64
 	// URL of the collector when using Jaeger
-	collectorURL string
+	CollectorURL string
 	// Writer to use for the console tracer
-	consoleWriter io.Writer
+	ConsoleWriter io.Writer
 }
 
 // TracerProvider provides access to Tracers, which in turn allow for creation
