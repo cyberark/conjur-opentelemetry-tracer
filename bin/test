@@ -31,7 +31,7 @@ echo "Creating junit report..."
 
 docker run --rm \
   -v $PWD/test:/test \
-  conjur-authn-k8s-client-junit:latest \
+  conjur-opentelemetry-tracer-junit:latest \
   bash -exc "
     cat ./junit.output | go-junit-report > ./junit.xml
   "
