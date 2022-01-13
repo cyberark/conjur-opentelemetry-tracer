@@ -21,7 +21,7 @@ type jaegerTracerProvider struct {
 
 func newJaegerTracerProvider(config TracerProviderConfig) (TracerProvider, error) {
 	// Create the Jaeger exporter
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(config.collectorURL)))
+	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(config.CollectorURL)))
 	if err != nil {
 		return nil, err
 	}
@@ -31,14 +31,14 @@ func newJaegerTracerProvider(config TracerProviderConfig) (TracerProvider, error
 		// Record information about this application in a Resource.
 		tracesdk.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(config.tracerService),
-			attribute.String("environment", config.tracerEnvironment),
-			attribute.Int64("ID", config.tracerID),
+			semconv.ServiceNameKey.String(config.TracerService),
+			attribute.String("environment", config.TracerEnvironment),
+			attribute.Int64("ID", config.TracerID),
 		)),
 	)
 	tp := jaegerTracerProvider{
 		providerSDK: providerSDK,
-		tracerName:  config.tracerName,
+		tracerName:  config.TracerName,
 	}
 	return &tp, nil
 }

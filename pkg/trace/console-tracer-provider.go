@@ -48,16 +48,16 @@ func newConsoleTracerProvider(config TracerProviderConfig) (TracerProvider, erro
 		// Record information about this application in a Resource.
 		tracesdk.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(config.tracerService),
-			attribute.String("environment", config.tracerEnvironment),
-			attribute.Int64("ID", config.tracerID),
+			semconv.ServiceNameKey.String(config.TracerService),
+			attribute.String("environment", config.TracerEnvironment),
+			attribute.Int64("ID", config.TracerID),
 		)),
 	)
 	tp := consoleTracerProvider{
 		providerSDK:   providerSDK,
 		tempFilePath:  tempFile.Name(),
-		consoleWriter: config.consoleWriter,
-		tracerName:    config.tracerName,
+		consoleWriter: config.ConsoleWriter,
+		tracerName:    config.TracerName,
 	}
 	return &tp, nil
 }

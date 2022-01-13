@@ -70,8 +70,8 @@ func TestTracer(t *testing.T) {
 			ctx := context.Background()
 
 			tp, err := NewTracerProvider(tc.providerType, false, TracerProviderConfig{
-				collectorURL:  tc.collectorUrl,
-				consoleWriter: output,
+				CollectorURL:  tc.collectorUrl,
+				ConsoleWriter: output,
 			})
 			assert.NoError(t, err)
 			tracer := tp.Tracer(tc.name)
