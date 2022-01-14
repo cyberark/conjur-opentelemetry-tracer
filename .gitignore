@@ -1,2 +1,4 @@
 test/
 .idea/
+build_ca_certificate/
+VERSION

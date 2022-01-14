@@ -1,5 +1,26 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
+#
+# Build Conjur OpenTelemetry Tracer
+# usage: ./bin/build
+set -ex
 
-set -euo pipefail
+cd "$(dirname "${0}")"
+. ./build_utils
+cd ..
 
-go build ./...
+readonly IMAGE_NAME="conjur-opentelemetry-tracer"
+
+function main() {
+  retrieve_cyberark_ca_cert
+  build_docker_image
+}
+
+function build_docker_image() {
+  docker build \
+    --build-arg "GIT_COMMIT_SHORT=$(git_commit_short)" \
+    -t "${IMAGE_NAME}:latest" \
+    -t "${IMAGE_NAME}:$(full_version_tag)" \
+    .
+}
+
+main
