@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Basic functionality [cyberark/conjur-opentelemetry-tracer#1](https://github.com/cyberark/conjur-opentelemetry-tracer/pull/1)
 
 ### Changed
+- Added replace for gopkg.in/yaml.v3 to ensure we use latest version in dep tree
+  [cyberark/conjur-opentelemetry-tracer#6](https://github.com/cyberark/conjur-opentelemetry-tracer/pull/6)
 - Updated go dependencies to latest versions (github.com/stretchr/testify -> 1.7.2, 
   go.opentelemetry.io/otel/* -> 1.7.0)
   [cyberark/conjur-opentelemetry-tracer#5](https://github.com/cyberark/conjur-opentelemetry-tracer/pull/5)
