@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -eox pipefail
+
+junit_output_file="test/junit.output"
+
+rm -f junit.xml
+
+echo "Building junit image..."
+
+docker build -f Dockerfile.junit -t conjur-opentelemetry-tracer-junit:latest .
+
+echo "Creating junit report..."
+
+docker run --rm \
+  -v $PWD/test:/test \
+  conjur-opentelemetry-tracer-junit:latest \
+  bash -exc "
+    cat ./junit.output | go-junit-report > ./junit.xml
+  "

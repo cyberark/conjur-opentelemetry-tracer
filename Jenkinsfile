@@ -69,8 +69,12 @@ pipeline {
     stage('Test') {
       steps {
         sh './bin/test'
-
-        junit 'test/junit.xml'
+      }
+      post {
+        always {
+          sh './bin/coverage'
+          junit 'test/junit.xml'
+        }
       }
     }
   
