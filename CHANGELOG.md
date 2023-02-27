@@ -18,5 +18,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   go.opentelemetry.io/otel/* -> 1.7.0)
   [cyberark/conjur-opentelemetry-tracer#5](https://github.com/cyberark/conjur-opentelemetry-tracer/pull/5)
 
+### Security
+- Update golang.org/x/sys to 0.1.0 for CVE-2022-29526 (not vulnerable)
+  [cyberark/conjur-opentelemetry-tracer#8](https://github.com/cyberark/conjur-opentelemetry-tracer/pull/8)
+
 [Unreleased]: https://github.com/cyberark/secrets-provider-for-k8s/compare/v0.0.1...HEAD
 [0.0.1]: https://github.com/cyberark/secrets-provider-for-k8s/releases/tag/v0.0.1
