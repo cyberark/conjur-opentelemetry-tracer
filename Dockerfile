@@ -1,5 +1,5 @@
 #=============== Build Container ===================
-FROM golang:1.17-stretch
+FROM golang:1.20
 
 ARG GIT_COMMIT_SHORT="dev"
 ARG KUBECTL_VERSION=1.23.0
