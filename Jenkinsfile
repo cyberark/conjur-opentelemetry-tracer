@@ -1,4 +1,5 @@
 #!/usr/bin/env groovy
+@Library("product-pipelines-shared-library") _
 
 // This is a template Jenkinsfile for builds and the automated release project
 
@@ -7,7 +8,7 @@ properties([
   // Include the automated release parameters for the build
   release.addParams(),
   // Dependencies of the project that should trigger builds
-  dependencies(['cyberark/conjur-base-image', 'cyberark/conjur-api-ruby'])
+  dependencies(['conjur-enterprise/conjur-base-image', 'conjur-enterprise/conjur-api-ruby'])
 ])
 
 // Performs release promotion.  No other stages will be run
@@ -18,11 +19,14 @@ if (params.MODE == "PROMOTE") {
     // Any publishing of targetVersion artifacts occur here
     // Anything added to assetDirectory will be attached to the Github Release
   }
+
+  // Copy Github Enterprise release to Github
+  release.copyEnterpriseRelease(params.VERSION_TO_PROMOTE)
   return
 }
 
 pipeline {
-  agent { label 'executor-v2' }
+  agent { label 'conjur-enterprise-common-agent' }
 
   options {
     timestamps()
@@ -53,27 +57,45 @@ pipeline {
         }
       }
     }
+
+    stage('Get InfraPool ExecutorV2 Agent') {
+      steps {
+        script {
+          // Request ExecutorV2 agents for 1 hour(s)
+          INFRAPOOL_EXECUTORV2_AGENT_0 = getInfraPoolAgent.connected(type: "ExecutorV2", quantity: 1, duration: 1)[0]
+        }
+      }
+    }
+
     // Generates a VERSION file based on the current build number and latest version in CHANGELOG.md
     stage('Validate Changelog and set version') {
       steps {
-        updateVersion("CHANGELOG.md", "${BUILD_NUMBER}")
+        updateVersion(INFRAPOOL_EXECUTORV2_AGENT_0, "CHANGELOG.md", "${BUILD_NUMBER}")
       }
     }
 
     stage('Build') {
       steps {
-        sh './bin/build'
+        script {
+          INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/build'
+        }
       }
     }
 
     stage('Test') {
       steps {
-        sh './bin/test'
+        script {
+          INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/test'
+        }
       }
       post {
         always {
-          sh './bin/coverage'
-          junit 'test/junit.xml'
+          script {
+            INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/coverage'
+            INFRAPOOL_EXECUTORV2_AGENT_0.agentStash name: 'test-files', includes: 'test/*.xml'
+            unstash 'test-files'
+            junit 'test/junit.xml'
+          }
         }
       }
     }
@@ -86,7 +108,7 @@ pipeline {
       }
 
       steps {
-        release { billOfMaterialsDirectory, assetDirectory ->
+        release(INFRAPOOL_EXECUTORV2_AGENT_0) { billOfMaterialsDirectory, assetDirectory ->
           // Publish release artifacts to all the appropriate locations
           // Copy any artifacts to assetDirectory to attach them to the Github release
         }
@@ -96,7 +118,7 @@ pipeline {
 
   post {
     always {
-      cleanupAndNotify(currentBuild.currentResult)
+      releaseInfraPoolAgent(".infrapool/release_agents")
     }
   }
 }
