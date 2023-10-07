@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 
 	"go.opentelemetry.io/otel"
 )
@@ -88,4 +89,49 @@ func NewTracerProvider(
 func GlobalTracer(tracerName string) Tracer {
 	tracer := otel.Tracer(tracerName)
 	return NewOtelTracer(tracer)
+}
+
+// TypeFromAnnotationsOrEnv return a TracerProviderType and optional Jaeger
+// collector URL based on a map of annotation key-value pairs and environment
+// variable configuration. Annotations are prioritized over envvars.
+func TypeFromAnnotationsOrEnv(annots map[string]string) (TracerProviderType, string) {
+	return typeFromAnnotationsOrCustomEnv(annots, os.Getenv)
+}
+
+func typeFromAnnotationsOrCustomEnv(annots map[string]string, getEnv func(string) string) (TracerProviderType, string) {
+	providerType, jaegerUrl := TypeFromAnnotations(annots)
+	if providerType == NoopProviderType {
+		providerType, jaegerUrl = typeFromCustomEnv(getEnv)
+	}
+	return providerType, jaegerUrl
+}
+
+// TypeFromEnv returns a TracerProviderType and optional Jaeger collector URL
+// based on environment variable configuration.
+func TypeFromEnv() (TracerProviderType, string) {
+	return typeFromCustomEnv(os.Getenv)
+}
+
+func typeFromCustomEnv(getEnv func(string) string) (TracerProviderType, string) {
+	jaegerUrl := getEnv("JAEGER_COLLECTOR_URL")
+	if jaegerUrl != "" {
+		return JaegerProviderType, jaegerUrl
+	}
+	if getEnv("LOG_TRACES") == "true" {
+		return ConsoleProviderType, ""
+	}
+	return NoopProviderType, ""
+}
+
+// TypeFromAnnotations returns a TracerProviderType and optional Jaeger
+// collector URL based on a map of annotations key-value pairs.
+func TypeFromAnnotations(annots map[string]string) (TracerProviderType, string) {
+	jaegerUrl := annots["conjur.org/jaeger-collector-url"]
+	if jaegerUrl != "" {
+		return JaegerProviderType, jaegerUrl
+	}
+	if annots["conjur.org/log-traces"] == "true" {
+		return ConsoleProviderType, ""
+	}
+	return NoopProviderType, ""
 }
