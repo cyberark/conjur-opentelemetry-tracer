@@ -58,6 +58,14 @@ pipeline {
       }
     }
 
+    stage('Scan for internal URLs') {
+      steps {
+        script {
+          detectInternalUrls()
+        }
+      }
+    }
+
     stage('Get InfraPool ExecutorV2 Agent') {
       steps {
         script {
