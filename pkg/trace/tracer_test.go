@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -97,4 +99,60 @@ func TestTracer(t *testing.T) {
 		_, err := NewTracerProvider(TracerProviderType(10), false, TracerProviderConfig{})
 		assert.Contains(t, err.Error(), "invalid TracerProviderType")
 	})
+}
+
+func TestCreate(t *testing.T) {
+	testCases := []struct {
+		description string
+		pType       TracerProviderType
+		config      TracerProviderConfig
+		factory     func(TracerProviderType, bool, TracerProviderConfig) (TracerProvider, error)
+		assertions  func(*testing.T, context.Context, Tracer, func(context.Context), error)
+	}{
+		{
+			description: "failing factory returns error",
+			factory: func(tpt TracerProviderType, b bool, tpc TracerProviderConfig) (TracerProvider, error) {
+				return nil, fmt.Errorf("some error")
+			},
+			assertions: func(t *testing.T, ctx context.Context, tracer Tracer, f func(context.Context), err error) {
+				assert.Nil(t, ctx)
+				assert.Nil(t, tracer)
+				assert.Nil(t, f)
+				assert.Contains(t, err.Error(), "some error")
+			},
+		},
+		{
+			description: "noop tracer",
+			pType:       NoopProviderType,
+			config: TracerProviderConfig{
+				TracerName:        "mockConfig",
+				TracerService:     "mockService",
+				TracerEnvironment: "mockEnv",
+				TracerID:          1001,
+				CollectorURL:      "https://mockUrl",
+				ConsoleWriter:     os.Stdout,
+			},
+			factory: func(tpt TracerProviderType, b bool, tpc TracerProviderConfig) (TracerProvider, error) {
+				return NewTracerProvider(tpt, b, tpc)
+			},
+			assertions: func(t *testing.T, ctx context.Context, tracer Tracer, f func(context.Context), err error) {
+				var span Span
+				ctx, span = tracer.Start(ctx, "some span")
+
+				assert.Nil(t, err)
+				assert.False(t, span.IsRecording())
+
+				f(ctx)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			ctx, tracer, cleanup, err := create(
+				tc.pType, tc.config, tc.factory,
+			)
+			tc.assertions(t, ctx, tracer, cleanup, err)
+		})
+	}
 }

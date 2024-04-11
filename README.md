@@ -34,13 +34,25 @@ does it require?
 ## Usage instructions
 
 ```go
+// Get TracerProviderType from configuration
+traceType, collectorUrl := trace.TypeFromEnv()
 
-tp, _ := trace.NewTracerProvider(trace.ConsoleProviderType, "", os.Stdout, true)
-defer tp.Shutdown()
+// Create a new Tracer
+ctx, tracer, cleanup, _ := trace.Create(
+    traceType,
+    TracerProviderConfig{
+        TracerName:        "my-tracer",
+        TracerService:     "tracer-service",
+        TracerEnvironment: "development",
+        TracerID:          1,
+        CollectorURL:      collectorUrl,
+        ConsoleWriter:     os.Stdout,
+    },
+)
+defer cleanup(ctx)
 
-tracer := tp.Tracer("my-service")
-
-ctx, span := tracer.Start(context.Background(), "My process")
+// Setup a Span
+ctx, span := tracer.Start(ctx, "My process")
 defer span.End()
 
 // Do some task
@@ -48,7 +60,6 @@ defer span.End()
 if err != nil {
    span.RecordErrorAndSetStatus(err)
 }
-
 ```
 
 ## Contributing

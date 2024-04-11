@@ -14,6 +14,10 @@ type Span interface {
 	// method has been called.
 	End()
 
+	// IsRecording returns the recording state of the Span. It will return
+	// true if the Span is active and events can be recorded.
+	IsRecording() bool
+
 	// RecordError will record err as an exception span event for this span. An
 	// additional call to SetStatus is required if the Status of the Span should
 	// be set to Error, as this method does not change the Span status. If this
@@ -45,6 +49,10 @@ func newOtelSpan(spanOtel traceotel.Span) otelSpan {
 
 func (s otelSpan) End() {
 	s.spanOtel.End()
+}
+
+func (s otelSpan) IsRecording() bool {
+	return s.spanOtel.IsRecording()
 }
 
 func (s otelSpan) RecordError(err error) {
