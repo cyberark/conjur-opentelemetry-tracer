@@ -6,10 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [0.0.2] - 2024-03-22
+## [0.0.2] - 2024-11-04
 
 ### Security
-- Update Go to 1.22 (CONJSE-1842)
+- Update Go to 1.23 (CONJSE-1842, CNJR-6449)
 - Update Go to 1.20 and golang.org/x/sys to v0.8.0
   [cyberark/conjur-opentelemetry-tracer#9](https://github.com/cyberark/conjur-opentelemetry-tracer/pull/9)
 

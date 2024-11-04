@@ -8,7 +8,7 @@ properties([
   // Include the automated release parameters for the build
   release.addParams(),
   // Dependencies of the project that should trigger builds
-  dependencies(['conjur-enterprise/conjur-base-image', 'conjur-enterprise/conjur-api-ruby'])
+  dependencies([])
 ])
 
 // Performs release promotion.  No other stages will be run
