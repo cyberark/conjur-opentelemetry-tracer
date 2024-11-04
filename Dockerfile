@@ -1,8 +1,8 @@
 #=============== Build Container ===================
-FROM golang:1.22
+FROM golang:1.23
 
 ARG GIT_COMMIT_SHORT="dev"
-ARG KUBECTL_VERSION=1.23.0
+ARG KUBECTL_VERSION=1.31.2
 
 # On CyberArk dev laptops, golang module dependencies are downloaded with a
 # corporate proxy in the middle. For these connections to succeed we need to
@@ -12,7 +12,7 @@ ARG KUBECTL_VERSION=1.23.0
 # certificate is not available, we copy the (potentially empty) directory
 # and update container certificates based on that, rather than rely on the
 # CA file itself.
-ADD build_ca_certificate /usr/local/share/ca-certificates/
+COPY build_ca_certificate /usr/local/share/ca-certificates/
 RUN update-ca-certificates
 
 RUN mkdir -p /work

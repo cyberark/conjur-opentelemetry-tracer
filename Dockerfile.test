@@ -1,6 +1,6 @@
-FROM golang:1.22-alpine
-MAINTAINER CyberArk Software Ltd.
+FROM golang:1.23-alpine
 LABEL id="conjur-opentelemetry-tracer-test-runner"
+LABEL maintainer="CyberArk Software Ltd."
 
 ENTRYPOINT [ "go", "test", "-v", "-timeout", "3m" ]
 WORKDIR /conjur-opentelemetry-tracer

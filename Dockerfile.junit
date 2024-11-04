@@ -1,6 +1,6 @@
-FROM golang:1.22-alpine
-MAINTAINER CyberArk Software Ltd.
+FROM golang:1.23-alpine
 LABEL id="conjur-opentelemetry-tracer-junit-processor"
+LABEL maintainer="CyberArk Software Ltd."
 
 WORKDIR /test
 
