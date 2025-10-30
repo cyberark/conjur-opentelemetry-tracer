@@ -1,5 +1,5 @@
 #=============== Build Container ===================
-FROM golang:1.23
+FROM golang:1.25
 
 ARG GIT_COMMIT_SHORT="dev"
 ARG KUBECTL_VERSION=1.31.2
