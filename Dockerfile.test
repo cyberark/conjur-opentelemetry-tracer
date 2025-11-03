@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine
+FROM golang:1.25-alpine
 LABEL id="conjur-opentelemetry-tracer-test-runner"
 LABEL maintainer="CyberArk Software Ltd."
 
