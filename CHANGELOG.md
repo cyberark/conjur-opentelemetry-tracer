@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 - Update Go to 1.25 (CONJSE-2067)
 
+### Added
+- Added `close-stale.yml` GitHub workflow
+
 ## [0.0.3] - 2025-10-16
 
 ### Changed
