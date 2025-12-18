@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.5] - 2025-12-18
+
+### Changed
+- Update dependencies
+
 ## [0.0.4] - 2025-10-30
 
 ### Security
@@ -18,7 +23,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Updated documentation to align with Conjur Enterprise name change to Secrets Manager. (CNJR-10997)
-
 
 ## [0.0.2] - 2024-11-04
 
@@ -43,7 +47,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update golang.org/x/sys to 0.1.0 for CVE-2022-29526 (not vulnerable)
   [cyberark/conjur-opentelemetry-tracer#8](https://github.com/cyberark/conjur-opentelemetry-tracer/pull/8)
 
-[Unreleased]: https://github.com/cyberark/secrets-provider-for-k8s/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/cyberark/secrets-provider-for-k8s/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/cyberark/secrets-provider-for-k8s/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/cyberark/secrets-provider-for-k8s/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/cyberark/secrets-provider-for-k8s/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/cyberark/secrets-provider-for-k8s/compare/v0.0.1...v0.0.2
